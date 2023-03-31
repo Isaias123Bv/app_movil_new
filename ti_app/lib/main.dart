@@ -1,68 +1,86 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'tabla.dart';
 import 'package:ti_app/second.dart';
 import 'package:ti_app/recuperacion.dart';
 import 'package:http/http.dart' as http;
 
 Future<Usuario> getUsuario(String usuario, String contrasena) async {
   final response = await http.get(Uri.parse(
-      'https://uthliberador.com/iot/ws/loginn.php?us=$usuario&ps=$contrasena'));
+      'https://technologystaruth5.com.mx/api_xd/login.php?us=$usuario&ps=$contrasena'));
   if (response.statusCode == 200) {
     return Usuario.fromJson(jsonDecode(response.body));
   } else {
-    throw Exception('Error al validar usuario');
+    throw Exception('Ingresa los datos. ');
   }
 }
 
 class Usuario {
-  final String id_usuario;
-  final String user;
+  final String id;
+  final String username;
   final String nombre;
   final String ap;
   final String am;
-  final String perfil;
+  final String rol;
   final String correo;
 
   const Usuario({
-    required this.id_usuario,
-    required this.user,
+    required this.id,
+    required this.username,
     required this.nombre,
     required this.ap,
     required this.am,
-    required this.perfil,
+    required this.rol,
     required this.correo,
   });
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
-        id_usuario: json['id_usuario'],
-        user: json['user'],
+        id: json['id'],
+        username: json['username'],
         nombre: json['nombre'],
         ap: json['ap'],
         am: json['am'],
-        perfil: json['perfil'],
+        rol: json['rol'],
         correo: json['correo']);
   }
 }
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
   static const String _title = '';
 
   @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String? loggedInUserId;
+
+  void setLoggedInUserId(String userId) {
+    setState(() {
+      loggedInUserId = userId;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: _title,
-      home: LoginPage(),
+      title: MyApp._title,
+      home: LoginPage(setLoggedInUserId: setLoggedInUserId),
+      routes: {
+        '/second': (context) => SecondRoute(loggedInUserId: loggedInUserId),
+      },
     );
   }
 }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  final Function(String) setLoggedInUserId;
+  LoginPage({Key? key, required this.setLoggedInUserId}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -76,10 +94,9 @@ class _LoginPageState extends State<LoginPage> {
     try {
       Usuario usuario =
           await getUsuario(_userController.text, _passwordController.text);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => SecondRoute()),
-      );
+      widget.setLoggedInUserId(usuario.id.toString());
+      // Aquí se guarda el ID del usuario
+      Navigator.pushNamed(context, '/second');
     } catch (e) {
       showDialog(
         context: context,

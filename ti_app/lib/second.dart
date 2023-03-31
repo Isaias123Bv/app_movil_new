@@ -3,9 +3,10 @@ import 'package:ti_app/semana.dart';
 import 'package:ti_app/mes.dart';
 import 'package:ti_app/retardo.dart';
 import 'package:ti_app/main.dart';
+import 'package:ti_app/recuperacion.dart';
 
 class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
+  const MyWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +15,11 @@ class MyWidget extends StatelessWidget {
 }
 
 class SecondRoute extends StatefulWidget {
+  final String? loggedInUserId;
+  SecondRoute({Key? key, required this.loggedInUserId}) : super(key: key);
+
   @override
-  State<SecondRoute> createState() => _SecondRouteState();
+  _SecondRouteState createState() => _SecondRouteState();
 }
 
 class _SecondRouteState extends State<SecondRoute> {
@@ -60,7 +64,7 @@ class _SecondRouteState extends State<SecondRoute> {
                       ),
                       SizedBox(width: 10),
                       Text(
-                        'usuario@example.com',
+                        widget.loggedInUserId ?? 'No User',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -104,7 +108,7 @@ class _SecondRouteState extends State<SecondRoute> {
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => Recovery()),
                   (route) => false,
                 );
                 // Aquí puedes agregar la lógica para cerrar sesión

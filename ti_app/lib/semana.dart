@@ -8,7 +8,7 @@ class WeekScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: TablaDatos()),
+          Expanded(child: TablaDatos(loggedInUserId: '')),
           Expanded(child: Calendario()),
         ],
       ),
