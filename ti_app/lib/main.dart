@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'main.dart';
 import 'tabla.dart';
 import 'package:ti_app/second.dart';
 import 'package:ti_app/recuperacion.dart';
@@ -58,9 +59,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? loggedInUserId;
+  int? loggedInUserId;
 
-  void setLoggedInUserId(String userId) {
+  void setLoggedInUserId(int userId) {
     setState(() {
       loggedInUserId = userId;
     });
@@ -79,25 +80,32 @@ class _MyAppState extends State<MyApp> {
 }
 
 class LoginPage extends StatefulWidget {
-  final Function(String) setLoggedInUserId;
+  var setLoggedInUserId;
+  
   LoginPage({Key? key, required this.setLoggedInUserId}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  static var user;
 
   Future<void> _login() async {
     try {
       Usuario usuario =
           await getUsuario(_userController.text, _passwordController.text);
-      widget.setLoggedInUserId(usuario.id.toString());
+      print("parse:");
+      widget.setLoggedInUserId(int.parse(usuario.id));
+      print(widget.setLoggedInUserId);
+      print(usuario.id);
+      user = usuario;
       // Aquí se guarda el ID del usuario
       Navigator.pushNamed(context, '/second');
     } catch (e) {
+      print(e);
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

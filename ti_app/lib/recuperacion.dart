@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ti_app/semana.dart';
 
-import 'package:flutter/material.dart';
 
 class Recovery extends StatefulWidget {
   @override

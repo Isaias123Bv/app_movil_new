@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ti_app/tabla.dart';
 import 'package:ti_app/calendario.dart';
 
+import 'main.dart';
+
 class MonthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -10,7 +12,7 @@ class MonthScreen extends StatelessWidget {
         children: [
           Expanded(
               child: TablaDatos(
-            loggedInUserId: '',
+            loggedInUserId: LoginPageState.user.id,
           )),
           Expanded(child: Calendario()),
         ],

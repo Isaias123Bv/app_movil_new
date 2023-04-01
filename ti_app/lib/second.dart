@@ -15,9 +15,10 @@ class MyWidget extends StatelessWidget {
 }
 
 class SecondRoute extends StatefulWidget {
-  final String? loggedInUserId;
+  var loggedInUserId;
   SecondRoute({Key? key, required this.loggedInUserId}) : super(key: key);
 
+  
   @override
   _SecondRouteState createState() => _SecondRouteState();
 }
@@ -63,13 +64,7 @@ class _SecondRouteState extends State<SecondRoute> {
                         size: 50,
                       ),
                       SizedBox(width: 10),
-                      Text(
-                        widget.loggedInUserId ?? 'No User',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      ),
+                    
                     ],
                   ),
                 ],

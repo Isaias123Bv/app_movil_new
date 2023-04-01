@@ -3,12 +3,14 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-Future<Evento?> getEvento(String userId) async {
+Future<Evento?> getEvento(var userId) async {
   final response = await http.get(Uri.parse(
       'https://technologystaruth5.com.mx/api_xd/evento.php?idregistro=$userId'));
   print(response.statusCode);
   print(response.body);
+  print(userId);
   if (response.statusCode == 200) {
+    print("ya valide :3");
     final Map<String, dynamic> eventoJson = jsonDecode(response.body);
     return Evento.fromJson(eventoJson);
   } else {
@@ -38,9 +40,9 @@ class Evento {
 }
 
 class TablaDatos extends StatefulWidget {
-  final String? loggedInUserId;
+  var loggedInUserId;
 
-  const TablaDatos({Key? key, required this.loggedInUserId}) : super(key: key);
+  TablaDatos({Key? key, required this.loggedInUserId}) : super(key: key);
 
   @override
   _TablaDatosState createState() => _TablaDatosState();
@@ -52,7 +54,7 @@ class _TablaDatosState extends State<TablaDatos> {
   @override
   void initState() {
     super.initState();
-    _futureEvento = getEvento(widget.loggedInUserId ?? '');
+    _futureEvento = getEvento(widget.loggedInUserId ?? 0);
   }
 
   @override
