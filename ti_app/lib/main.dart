@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
 
 class LoginPage extends StatefulWidget {
   var setLoggedInUserId;
-  
+
   LoginPage({Key? key, required this.setLoggedInUserId}) : super(key: key);
 
   @override
@@ -97,10 +97,7 @@ class LoginPageState extends State<LoginPage> {
     try {
       Usuario usuario =
           await getUsuario(_userController.text, _passwordController.text);
-      print("parse:");
       widget.setLoggedInUserId(int.parse(usuario.id));
-      print(widget.setLoggedInUserId);
-      print(usuario.id);
       user = usuario;
       // Aquí se guarda el ID del usuario
       Navigator.pushNamed(context, '/second');

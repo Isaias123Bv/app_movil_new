@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ti_app/semana.dart';
-import 'package:ti_app/mes.dart';
 import 'package:ti_app/retardo.dart';
 import 'package:ti_app/main.dart';
 import 'package:ti_app/recuperacion.dart';
@@ -18,7 +17,6 @@ class SecondRoute extends StatefulWidget {
   var loggedInUserId;
   SecondRoute({Key? key, required this.loggedInUserId}) : super(key: key);
 
-  
   @override
   _SecondRouteState createState() => _SecondRouteState();
 }
@@ -28,7 +26,6 @@ class _SecondRouteState extends State<SecondRoute> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     WeekScreen(),
-    MonthScreen(),
     DelayScreen(),
   ];
 
@@ -64,7 +61,6 @@ class _SecondRouteState extends State<SecondRoute> {
                         size: 50,
                       ),
                       SizedBox(width: 10),
-                    
                     ],
                   ),
                 ],
@@ -82,7 +78,7 @@ class _SecondRouteState extends State<SecondRoute> {
               },
             ),
             ListTile(
-              title: Text('Mes'),
+              title: Text('Retardo'),
               selected: _selectedIndex == 1,
               onTap: () {
                 _onItemTapped(1);
@@ -90,20 +86,12 @@ class _SecondRouteState extends State<SecondRoute> {
               },
             ),
             ListTile(
-              title: Text('Retardo'),
-              selected: _selectedIndex == 2,
-              onTap: () {
-                _onItemTapped(2);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
               title: Text('Cerrar Sesión'),
-              selected: _selectedIndex == 3,
+              selected: _selectedIndex == 2,
               onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => Recovery()),
+                  MaterialPageRoute(builder: (context) => MyApp()),
                   (route) => false,
                 );
                 // Aquí puedes agregar la lógica para cerrar sesión

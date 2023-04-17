@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ti_app/semana.dart';
-
+import 'package:http/http.dart' as http;
 
 class Recovery extends StatefulWidget {
   @override
@@ -11,12 +11,42 @@ class _RecoveryState extends State<Recovery> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
-  void _submitForm() {
+  bool _isValidEmail(String value) {
+    if (value.isEmpty) {
+      return false;
+    }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      return false;
+    }
+    return true;
+  }
+
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // Aquí puedes agregar la lógica para enviar el correo electrónico de recuperación de contraseña
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Correo electrónico enviado'),
-      ));
+      // Realizar petición POST a la API
+      var url =
+          'https://technologystaruth5.com.mx/api_xd/correo.php?correo=$_emailController'; // Reemplaza con la URL de tu API PHP
+      try {
+        var response = await http
+            .post(Uri.parse(url), body: {'correo': _emailController.text});
+
+        if (response.statusCode == 200) {
+          // La petición fue exitosa
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Correo electrónico enviado'),
+          ));
+        } else {
+          // La petición falló
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Error al enviar el correo electrónico'),
+          ));
+        }
+      } catch (error) {
+        // Capturar errores y mostrar mensaje adecuado
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error al enviar el correo electrónico'),
+        ));
+      }
     }
   }
 
@@ -46,18 +76,14 @@ class _RecoveryState extends State<Recovery> {
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'El correo electrónico es requerido';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
+                  if (!_isValidEmail(value!)) {
                     return 'Ingrese un correo electrónico válido';
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
+              TextButton(
                 onPressed: _submitForm,
                 child: Text('Recuperar Contraseña'),
               ),

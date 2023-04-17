@@ -2,20 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
-Future<Evento?> getEvento(var userId) async {
+Future<Eventos?> getEvento(var userId) async {
   final response = await http.get(Uri.parse(
-      'https://technologystaruth5.com.mx/api_xd/evento.php?idregistro=$userId'));
-  print(response.statusCode);
-  print(response.body);
-  print(userId);
+      'https://technologystaruth5.com.mx/api_xd/evento.php?id_usuario=$userId'));
   if (response.statusCode == 200) {
-    print("ya valide :3");
-    final Map<String, dynamic> eventoJson = jsonDecode(response.body);
-    return Evento.fromJson(eventoJson);
+    final Map<String, dynamic> eventosJson = jsonDecode(response.body);
+    return Eventos.fromJson(eventosJson);
   } else {
     print('Error ${response.statusCode}: ${response.reasonPhrase}');
     return null;
+  }
+}
+
+class Eventos {
+  final List<Evento> eventos;
+
+  Eventos({required this.eventos});
+
+  factory Eventos.fromJson(Map<String, dynamic> json) {
+    final eventosFromJson = json['eventos'] as List<dynamic>;
+    final eventos = eventosFromJson
+        .map((evento) => Evento.fromJson(evento as Map<String, dynamic>))
+        .toList();
+    return Eventos(eventos: eventos);
   }
 }
 
@@ -23,11 +34,13 @@ class Evento {
   final String nombre;
   final String horaEntrada;
   final String horaSalida;
+  final String fecha;
 
   Evento({
     required this.nombre,
     required this.horaEntrada,
     required this.horaSalida,
+    required this.fecha,
   });
 
   factory Evento.fromJson(Map<String, dynamic> json) {
@@ -35,6 +48,7 @@ class Evento {
       nombre: json['nombre'] ?? '',
       horaEntrada: json['hora_entrada'] ?? '',
       horaSalida: json['hora_salida'] ?? '',
+      fecha: json['fecha'] ?? '',
     );
   }
 }
@@ -49,44 +63,48 @@ class TablaDatos extends StatefulWidget {
 }
 
 class _TablaDatosState extends State<TablaDatos> {
-  late Future<Evento?> _futureEvento;
+  late Future<Eventos?> _futureEventos;
 
   @override
   void initState() {
     super.initState();
-    _futureEvento = getEvento(widget.loggedInUserId ?? 0);
+    _futureEventos = getEvento(widget.loggedInUserId ?? 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Evento?>(
-      future: _futureEvento,
+    return FutureBuilder<Eventos?>(
+      future: _futureEventos,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError || snapshot.data == null) {
             return Text('Error al cargar los datos');
           } else {
-            final evento = snapshot.data!;
+            final eventos = snapshot.data!.eventos;
             return Container(
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8.0),
               ),
               child: DataTable(
+                dataRowHeight: 35.0,
+                columnSpacing: 10.0,
                 columns: const [
-                  DataColumn(label: Text('Nombre')),
-                  DataColumn(label: Text('Hora de entrada')),
-                  DataColumn(label: Text('Hora de salida')),
+                  DataColumn(label: Text('Nombre'), numeric: false),
+                  DataColumn(label: Text('Fecha'), numeric: false),
+                  DataColumn(label: Text('Hora de entrada'), numeric: false),
+                  DataColumn(label: Text('Hora de salida'), numeric: false),
                 ],
-                rows: [
-                  DataRow(
+                rows: eventos.map((evento) {
+                  return DataRow(
                     cells: [
                       DataCell(Text(evento.nombre)),
+                      DataCell(Text(evento.fecha)),
                       DataCell(Text(evento.horaEntrada)),
                       DataCell(Text(evento.horaSalida)),
                     ],
-                  ),
-                ],
+                  );
+                }).toList(),
               ),
             );
           }
